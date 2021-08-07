@@ -1,4 +1,5 @@
 import React from "react"
+import ReactPaginate from 'react-paginate';
 
 class PlayerHome extends React.Component {
     constructor(props) {
@@ -15,11 +16,46 @@ class PlayerHome extends React.Component {
             commit_time: "",
             has_failed: "",
 
-            match_history: [],
+            offset: 0,
+            perPage: 5,
+            currentPage: 0,
+            pageCount: 0,
         };
+        this.handlePageClick = this
+            .handlePageClick
+            .bind(this);
     }
 
+    load_match_history() {
+        fetch(`http://192.168.135.128:8000/users/2/user_match_list/?format=json&limit=${this.state.perPage}&offset=${this.state.offset}`)
+            .then(response => response.json())
+            .then(data => {
+                    const match_history = data.results.map(match => <li key={match.match_id}><a href={match.url}>{match.url}</a></li>)
+
+                    this.setState({
+                        pageCount: Math.ceil(data.count / this.state.perPage),
+
+                        match_history
+                    })
+                }
+            );
+    }
+
+    handlePageClick = (e) => {
+        const selectedPage = e.selected;
+        const offset = selectedPage * this.state.perPage;
+
+        this.setState({
+            currentPage: selectedPage,
+            offset: offset
+        }, () => {
+            this.load_match_history()
+        });
+
+    };
+
     componentDidMount() {
+        console.log("hi1")
         fetch('http://192.168.135.128:8000/users/2/?format=json')
         .then(response => response.json())
             .then(data => {
@@ -28,7 +64,7 @@ class PlayerHome extends React.Component {
                     this.setState({student_id: data.student_id});
                 }
             );
-
+        console.log("hi2")
         fetch('http://192.168.135.128:8000/users/2/performance_list/?format=json')
         .then(response => response.json())
             .then(data => {
@@ -37,7 +73,7 @@ class PlayerHome extends React.Component {
                     this.setState({games_played: data[0].games_played});
                 }
             );
-
+        console.log("hi3")
         fetch('http://192.168.135.128:8000/users/2/user_code_list/?format=json')
             .then(response => response.json())
             .then(data => {
@@ -52,18 +88,11 @@ class PlayerHome extends React.Component {
                 this.setState({has_failed: data[0].has_failed})
                 }
             );
+        console.log("hi4")
+        this.load_match_history()
 
-        fetch('http://192.168.135.128:8000/users/2/user_match_list/?format=json')
-            .then(response => response.json())
-            .then(data => {
-                let match_list = [];
-                for (let i = 0; i < data.length; i++) {
-                    match_list.push(data[i].url)
-                    }
-                    this.setState({match_history: match_list})
-                }
-            );
     }
+
 
     render() {
         return (<div>
@@ -82,11 +111,21 @@ class PlayerHome extends React.Component {
                 <p>
                     Match History:
                 </p>
-                <ul>
-                    {this.state.match_history.map((match) => (
-                        <li><a href={match}>{match}</a></li>
-                    ))}
-                </ul>
+                <div>
+                    <ul>{this.state.match_history}</ul>
+                    <ReactPaginate
+                        previousLabel={"prev"}
+                        nextLabel={"next"}
+                        breakLabel={"..."}
+                        breakClassName={"break-me"}
+                        pageCount={this.state.pageCount}
+                        marginPagesDisplayed={2}
+                        pageRangeDisplayed={5}
+                        onPageChange={this.handlePageClick}
+                        containerClassName={"pagination"}
+                        subContainerClassName={"pages pagination"}
+                        activeClassName={"active"}/>
+                </div>
                 <p>
                     Code Failing: {this.state.has_failed.toString()}
                 </p>
