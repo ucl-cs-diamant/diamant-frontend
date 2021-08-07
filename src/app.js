@@ -8,6 +8,7 @@ import {
 import "./app.sass"
 import Leaderboards from "./pages/leaderboards";
 import Homepage from "./pages/home";
+import PlayerHome from "./pages/player_home";
 import Match from "./pages/match";
 
 function App() {
@@ -24,6 +25,9 @@ function App() {
                     <li>
                         <Link to="/match">match viewer</Link>
                     </li>
+                    <li>
+                    <Link to="/player_home">player_home</Link>
+                </li>
                 </ul>
             </nav>
 
@@ -35,6 +39,9 @@ function App() {
                 </Route>
                 <Route path="/home">
                     <Homepage />
+                </Route>
+                <Route path={"/player_home"}>
+                    <PlayerHome />
                 </Route>
                 <Route path="/match">
                     <Match />
