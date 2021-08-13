@@ -55,7 +55,6 @@ class PlayerHome extends React.Component {
     };
 
     componentDidMount() {
-        console.log("hi1")
         fetch('http://192.168.135.128:8000/users/2/?format=json')
         .then(response => response.json())
             .then(data => {
@@ -64,7 +63,6 @@ class PlayerHome extends React.Component {
                     this.setState({student_id: data.student_id});
                 }
             );
-        console.log("hi2")
         fetch('http://192.168.135.128:8000/users/2/performance_list/?format=json')
         .then(response => response.json())
             .then(data => {
@@ -73,7 +71,6 @@ class PlayerHome extends React.Component {
                     this.setState({games_played: data[0].games_played});
                 }
             );
-        console.log("hi3")
         fetch('http://192.168.135.128:8000/users/2/user_code_list/?format=json')
             .then(response => response.json())
             .then(data => {
@@ -88,7 +85,6 @@ class PlayerHome extends React.Component {
                 this.setState({has_failed: data[0].has_failed})
                 }
             );
-        console.log("hi4")
         this.load_match_history()
 
     }
