@@ -8,7 +8,7 @@
     "build": "webpack --mode production",
     "prepare": "husky install",
     "pre-commit": "lint-staged",
-    "pre-push": "lint-staged"
+    "pre-push": "eslint --fix src/*/**.js"
   },
   "author": "",
   "devDependencies": {
